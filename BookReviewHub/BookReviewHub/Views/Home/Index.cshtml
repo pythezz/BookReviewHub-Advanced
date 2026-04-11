@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="text-center mt-5">
+    <h1 class="display-4">Welcome to Book Review Hub!</h1>
+
+    <p class="lead mt-3">
+        Manage books, organize genres, and explore your collection.
+    </p>
+
+    <p class="lead mt-3">
+       Project for softuni, developed by Stanislav Stoychev.
+    </p>
+
+    <div class="mt-4">
+        <a asp-controller="Books" asp-action="Index" class="btn btn-primary btn-lg me-2">
+            Browse Books
+        </a>
+
+        <a asp-controller="Genres" asp-action="Index" class="btn btn-secondary btn-lg">
+            View Genres
+        </a>
+    </div>
+</div>

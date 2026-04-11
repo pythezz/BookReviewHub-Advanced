@@ -1,0 +1,39 @@
+@model BookReviewHub.ViewModels.GenreViewModel
+
+@{
+    ViewData["Title"] = "Delete Genre";
+}
+
+<h1 class="mb-4">Delete Genre</h1>
+
+<div class="card shadow-sm p-4">
+
+    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+    <h5 class="text-danger mb-4">
+        Are you sure you want to delete this genre?
+    </h5>
+
+    <dl class="row">
+        <dt class="col-sm-3">Genre Name</dt>
+        <dd class="col-sm-9">@Model.Name</dd>
+
+        <dt class="col-sm-3">Books in this genre</dt>
+        <dd class="col-sm-9">@Model.BookCount</dd>
+    </dl>
+
+    @if (Model.BookCount > 0)
+    {
+        <div class="alert alert-warning mt-3">
+            This genre cannot be deleted because it has @Model.BookCount book(s) assigned to it.
+        </div>
+    }
+
+    <form asp-action="Delete" method="post" class="mt-4">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+        <button type="submit" class="btn btn-danger" @(Model.BookCount > 0 ? "disabled" : "")>Confirm Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </form>
+
+</div>

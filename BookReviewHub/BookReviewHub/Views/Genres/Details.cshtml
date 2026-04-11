@@ -1,0 +1,26 @@
+@model BookReviewHub.ViewModels.GenreViewModel
+
+@{
+    ViewData["Title"] = "Genre Details";
+}
+
+<h1 class="mb-4">Genre Details</h1>
+
+<div class="card shadow-sm p-4">
+
+    <div class="row mb-3">
+        <div class="col-sm-3 fw-bold">Genre Name</div>
+        <div class="col-sm-9">@Model.Name</div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-sm-3 fw-bold">Number of Books</div>
+        <div class="col-sm-9">@Model.BookCount</div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+        <a asp-action="Index" class="btn btn-secondary">Back</a>
+    </div>
+
+</div>
