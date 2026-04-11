@@ -1,43 +1,32 @@
 @model BookReviewHub.ViewModels.BookViewModel
-
 @{
     ViewData["Title"] = "Book Details";
 }
 
 <h1 class="mb-4">Book Details</h1>
-
 <div class="card shadow-sm p-4">
-
     <h3 class="mb-3">@Model.Title</h3>
-
     <div class="row mb-2">
         <div class="col-sm-3 fw-bold">Author</div>
-        <div class="col-sm-9">@Model.Author</div>
+        <div class="col-sm-9">@Model.AuthorName</div>
     </div>
-
     <div class="row mb-2">
         <div class="col-sm-3 fw-bold">Genre</div>
         <div class="col-sm-9">@Model.GenreName</div>
     </div>
-
     <div class="row mb-2">
         <div class="col-sm-3 fw-bold">Publication Year</div>
         <div class="col-sm-9">@Model.PublicationYear</div>
     </div>
-
     <div class="row mb-2">
-        <div class="col-sm-3 fw-bold">Rating</div>
-        <div class="col-sm-9">@Model.Rating / 5</div>
+        <div class="col-sm-3 fw-bold">Average Rating</div>
+        <div class="col-sm-9">@Model.AverageRating.ToString("0.0") / 5 (@Model.ReviewCount reviews)</div>
     </div>
-
     <hr class="my-4" />
-
     <h5>Description</h5>
     <p>@Model.Description</p>
-
     <div class="mt-4">
         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
         <a asp-action="Index" class="btn btn-secondary">Back</a>
     </div>
-
 </div>

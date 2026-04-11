@@ -8,11 +8,13 @@ namespace BookReviewHub.Controllers
     {
         private readonly IBookService _bookService;
         private readonly IGenreService _genreService;
+        private readonly IAuthorService _authorService;
 
-        public BooksController(IBookService bookService, IGenreService genreService)
+        public BooksController(IBookService bookService, IGenreService genreService, IAuthorService authorService)
         {
             _bookService = bookService;
             _genreService = genreService;
+            _authorService = authorService;
         }
 
         public async Task<IActionResult> Index()
@@ -24,10 +26,8 @@ namespace BookReviewHub.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
-
             var book = await _bookService.GetByIdAsync(id.Value);
             if (book == null) return NotFound();
-
             return View(book);
         }
 
@@ -35,7 +35,8 @@ namespace BookReviewHub.Controllers
         {
             var model = new BookFormModel
             {
-                Genres = await _genreService.GetSelectListAsync()
+                Genres = await _genreService.GetSelectListAsync(),
+                Authors = await _authorService.GetSelectListAsync()
             };
             return View(model);
         }
@@ -47,9 +48,9 @@ namespace BookReviewHub.Controllers
             if (!ModelState.IsValid)
             {
                 model.Genres = await _genreService.GetSelectListAsync();
+                model.Authors = await _authorService.GetSelectListAsync();
                 return View(model);
             }
-
             await _bookService.CreateAsync(model);
             return RedirectToAction(nameof(Index));
         }
@@ -57,11 +58,10 @@ namespace BookReviewHub.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
-
             var model = await _bookService.GetFormModelByIdAsync(id.Value);
             if (model == null) return NotFound();
-
             model.Genres = await _genreService.GetSelectListAsync();
+            model.Authors = await _authorService.GetSelectListAsync();
             return View(model);
         }
 
@@ -70,26 +70,22 @@ namespace BookReviewHub.Controllers
         public async Task<IActionResult> Edit(int id, BookFormModel model)
         {
             if (id != model.Id) return NotFound();
-
             if (!ModelState.IsValid)
             {
                 model.Genres = await _genreService.GetSelectListAsync();
+                model.Authors = await _authorService.GetSelectListAsync();
                 return View(model);
             }
-
             var updated = await _bookService.UpdateAsync(model);
             if (!updated) return NotFound();
-
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
-
             var book = await _bookService.GetByIdAsync(id.Value);
             if (book == null) return NotFound();
-
             return View(book);
         }
 

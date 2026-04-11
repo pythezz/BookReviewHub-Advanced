@@ -2,6 +2,7 @@ using BookReviewHub.Data;
 using BookReviewHub.Models;
 using BookReviewHub.Services.Interfaces;
 using BookReviewHub.ViewModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookReviewHub.Services
@@ -19,15 +20,18 @@ namespace BookReviewHub.Services
         {
             return await _context.Books
                 .Include(b => b.Genre)
+                .Include(b => b.Author)
+                .Include(b => b.Reviews)
                 .Select(b => new BookViewModel
                 {
                     Id = b.Id,
                     Title = b.Title,
-                    Author = b.Author,
+                    AuthorName = b.Author != null ? b.Author.Name : "Unknown",
                     Description = b.Description ?? string.Empty,
                     PublicationYear = b.PublicationYear,
-                    Rating = b.Rating,
-                    GenreName = b.Genre != null ? b.Genre.Name : "Unknown"
+                    GenreName = b.Genre != null ? b.Genre.Name : "Unknown",
+                    AverageRating = b.Reviews.Any() ? Math.Round(b.Reviews.Average(r => r.Rating), 1) : 0,
+                    ReviewCount = b.Reviews.Count
                 })
                 .ToListAsync();
         }
@@ -36,6 +40,8 @@ namespace BookReviewHub.Services
         {
             var book = await _context.Books
                 .Include(b => b.Genre)
+                .Include(b => b.Author)
+                .Include(b => b.Reviews)
                 .FirstOrDefaultAsync(b => b.Id == id);
 
             if (book == null) return null;
@@ -44,29 +50,28 @@ namespace BookReviewHub.Services
             {
                 Id = book.Id,
                 Title = book.Title,
-                Author = book.Author,
+                AuthorName = book.Author?.Name ?? "Unknown",
                 Description = book.Description ?? string.Empty,
                 PublicationYear = book.PublicationYear,
-                Rating = book.Rating,
-                GenreName = book.Genre?.Name ?? "Unknown"
+                GenreName = book.Genre?.Name ?? "Unknown",
+                AverageRating = book.Reviews.Any() ? Math.Round(book.Reviews.Average(r => r.Rating), 1) : 0,
+                ReviewCount = book.Reviews.Count
             };
         }
 
         public async Task<BookFormModel?> GetFormModelByIdAsync(int id)
         {
             var book = await _context.Books.FindAsync(id);
-
             if (book == null) return null;
 
             return new BookFormModel
             {
                 Id = book.Id,
                 Title = book.Title,
-                Author = book.Author,
                 Description = book.Description ?? string.Empty,
                 PublicationYear = book.PublicationYear,
-                Rating = book.Rating,
-                GenreId = book.GenreId
+                GenreId = book.GenreId,
+                AuthorId = book.AuthorId
             };
         }
 
@@ -75,13 +80,11 @@ namespace BookReviewHub.Services
             var book = new Book
             {
                 Title = model.Title,
-                Author = model.Author,
                 Description = model.Description,
                 PublicationYear = model.PublicationYear,
-                Rating = model.Rating,
-                GenreId = model.GenreId
+                GenreId = model.GenreId,
+                AuthorId = model.AuthorId
             };
-
             _context.Books.Add(book);
             await _context.SaveChangesAsync();
         }
@@ -89,15 +92,13 @@ namespace BookReviewHub.Services
         public async Task<bool> UpdateAsync(BookFormModel model)
         {
             var book = await _context.Books.FindAsync(model.Id);
-
             if (book == null) return false;
 
             book.Title = model.Title;
-            book.Author = model.Author;
             book.Description = model.Description;
             book.PublicationYear = model.PublicationYear;
-            book.Rating = model.Rating;
             book.GenreId = model.GenreId;
+            book.AuthorId = model.AuthorId;
 
             _context.Books.Update(book);
             await _context.SaveChangesAsync();
@@ -107,7 +108,6 @@ namespace BookReviewHub.Services
         public async Task<bool> DeleteAsync(int id)
         {
             var book = await _context.Books.FindAsync(id);
-
             if (book == null) return false;
 
             _context.Books.Remove(book);
@@ -116,8 +116,18 @@ namespace BookReviewHub.Services
         }
 
         public async Task<bool> ExistsAsync(int id)
+            => await _context.Books.AnyAsync(b => b.Id == id);
+
+        public async Task<IEnumerable<SelectListItem>> GetSelectListAsync()
         {
-            return await _context.Books.AnyAsync(b => b.Id == id);
+            return await _context.Books
+                .OrderBy(b => b.Title)
+                .Select(b => new SelectListItem
+                {
+                    Value = b.Id.ToString(),
+                    Text = b.Title
+                })
+                .ToListAsync();
         }
     }
 }
