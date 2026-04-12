@@ -1,9 +1,11 @@
 ﻿using BookReviewHub.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookReviewHub.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -31,6 +33,54 @@ namespace BookReviewHub.Data
                 .HasForeignKey(b => b.AuthorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // roles
+            var adminRoleId = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
+            var userRoleId = "b2c3d4e5-f6a7-8901-bcde-f12345678901";
+
+            modelBuilder.Entity<IdentityRole>().HasData(
+                new IdentityRole
+                {
+                    Id = adminRoleId,
+                    Name = "Administrator",
+                    NormalizedName = "ADMINISTRATOR",
+                    ConcurrencyStamp = adminRoleId
+                },
+                new IdentityRole
+                {
+                    Id = userRoleId,
+                    Name = "User",
+                    NormalizedName = "USER",
+                    ConcurrencyStamp = userRoleId
+                }
+            );
+
+            // admin user
+            var adminUserId = "c3d4e5f6-a7b8-9012-cdef-123456789012";
+            var hasher = new PasswordHasher<ApplicationUser>();
+            var adminUser = new ApplicationUser
+            {
+                Id = adminUserId,
+                UserName = "admin@bookreviewhub.com",
+                NormalizedUserName = "ADMIN@BOOKREVIEWHUB.COM",
+                Email = "admin@bookreviewhub.com",
+                NormalizedEmail = "ADMIN@BOOKREVIEWHUB.COM",
+                EmailConfirmed = true,
+                DisplayName = "Admin",
+                RegisteredAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                SecurityStamp = "static-security-stamp-admin"
+            };
+            adminUser.PasswordHash = hasher.HashPassword(adminUser, "Admin@123456");
+            modelBuilder.Entity<ApplicationUser>().HasData(adminUser);
+
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+                new IdentityUserRole<string>
+                {
+                    UserId = adminUserId,
+                    RoleId = adminRoleId
+                }
+            );
+
+            // genres
             modelBuilder.Entity<Genre>().HasData(
                 new Genre { Id = 1, Name = "Fiction" },
                 new Genre { Id = 2, Name = "Non-Fiction" },
@@ -44,6 +94,7 @@ namespace BookReviewHub.Data
                 new Genre { Id = 10, Name = "Thriller" }
             );
 
+            // authors
             modelBuilder.Entity<Author>().HasData(
                 new Author { Id = 1, Name = "George Orwell", Nationality = "British", BirthYear = 1903, Biography = "Eric Arthur Blair, known by his pen name George Orwell, was an English novelist and essayist." },
                 new Author { Id = 2, Name = "J.K. Rowling", Nationality = "British", BirthYear = 1965, Biography = "Author of the Harry Potter fantasy series." },
@@ -52,6 +103,7 @@ namespace BookReviewHub.Data
                 new Author { Id = 5, Name = "J.R.R. Tolkien", Nationality = "British", BirthYear = 1892, Biography = "Author of The Hobbit and The Lord of the Rings." }
             );
 
+            // books
             modelBuilder.Entity<Book>().HasData(
                 new Book { Id = 1, Title = "1984", AuthorId = 1, GenreId = 3, PublicationYear = 1949, Description = "A dystopian novel set in a totalitarian society under constant surveillance." },
                 new Book { Id = 2, Title = "Animal Farm", AuthorId = 1, GenreId = 1, PublicationYear = 1945, Description = "An allegorical novella about farm animals who rebel against their farmer." },
