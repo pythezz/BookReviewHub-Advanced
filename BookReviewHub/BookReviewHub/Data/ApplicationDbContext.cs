@@ -33,6 +33,18 @@ namespace BookReviewHub.Data
                 .HasForeignKey(b => b.AuthorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.Book)
+                .WithMany(b => b.Reviews)
+                .HasForeignKey(r => r.BookId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Review>()
+                .HasOne(r => r.User)
+                .WithMany(u => u.Reviews)
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // roles
             var adminRoleId = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
             var userRoleId = "b2c3d4e5-f6a7-8901-bcde-f12345678901";
