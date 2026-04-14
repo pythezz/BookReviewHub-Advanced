@@ -33,6 +33,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<IGenreService, GenreService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 builder.Services.AddControllersWithViews();
 
