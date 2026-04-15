@@ -29,6 +29,29 @@
                         <small class="text-muted">(@Model.ReviewCount reviews)</small>
                     </dd>
                 </dl>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <div class="mt-3">
+                        @if (ViewBag.IsInList == true)
+                        {
+                            <form asp-controller="ReadingList" asp-action="Remove" method="post">
+                                <input type="hidden" name="bookId" value="@Model.Id" />
+                                <button class="btn btn-outline-danger btn-sm w-100">
+                                    Remove from Reading List
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-controller="ReadingList" asp-action="Add" method="post">
+                                <input type="hidden" name="bookId" value="@Model.Id" />
+                                <button class="btn btn-outline-primary btn-sm w-100">
+                                    + Add to Reading List
+                                </button>
+                            </form>
+                        }
+                    </div>
+                }
             </div>
         </div>
         <div class="mt-3 d-flex gap-2">

@@ -13,16 +13,20 @@ namespace BookReviewHub.Controllers
         private readonly IAuthorService _authorService; 
         private readonly IReviewService _reviewService;
 
+        private readonly IReadingListService _readingListService;
+
         public BooksController(
             IBookService bookService,
             IGenreService genreService,
             IAuthorService authorService,
-            IReviewService reviewService)
+            IReviewService reviewService,
+            IReadingListService readingListService)
         {
             _bookService = bookService;
             _genreService = genreService;
             _authorService = authorService;
             _reviewService = reviewService;
+            _readingListService = readingListService;
         }
 
         public async Task<IActionResult> Index()
@@ -45,6 +49,7 @@ namespace BookReviewHub.Controllers
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
                 ViewBag.HasReviewed = await _reviewService.UserHasReviewedBookAsync(id.Value, userId);
+                ViewBag.IsInList = await _readingListService.IsInListAsync(id.Value, userId);
             }
 
             return View(book);
