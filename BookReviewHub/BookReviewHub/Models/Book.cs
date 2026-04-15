@@ -33,5 +33,7 @@ namespace BookReviewHub.Models
         public Author? Author { get; set; }
 
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
+        public ICollection<ReadingListItem> ReadingListItems { get; set; } = new List<ReadingListItem>();
+
     }
 }

@@ -16,6 +16,7 @@ namespace BookReviewHub.Data
         public DbSet<Genre> Genres { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Author> Authors { get; set; }
+        public DbSet<ReadingListItem> ReadingListItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -44,6 +45,22 @@ namespace BookReviewHub.Data
                 .WithMany(u => u.Reviews)
                 .HasForeignKey(r => r.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ReadingListItem>()
+                .HasOne(rl => rl.User)
+                .WithMany(u => u.ReadingList)
+                .HasForeignKey(rl => rl.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ReadingListItem>()
+                .HasOne(rl => rl.Book)
+                .WithMany(b => b.ReadingListItems)
+                .HasForeignKey(rl => rl.BookId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ReadingListItem>()
+                .HasIndex(rl => new { rl.UserId, rl.BookId })
+                .IsUnique();
 
             // roles
             var adminRoleId = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
