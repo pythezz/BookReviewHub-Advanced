@@ -1,4 +1,5 @@
 using BookReviewHub.Data;
+using BookReviewHub.Helpers;
 using BookReviewHub.Models;
 using BookReviewHub.Services.Interfaces;
 using BookReviewHub.ViewModels;
@@ -16,24 +17,52 @@ namespace BookReviewHub.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<BookViewModel>> GetAllAsync()
+        public async Task<PaginatedList<BookViewModel>> GetPagedAsync(
+            string? search, int? genreId, string? sortBy, int page, int pageSize)
         {
-            return await _context.Books
+            var query = _context.Books
                 .Include(b => b.Genre)
                 .Include(b => b.Author)
                 .Include(b => b.Reviews)
-                .Select(b => new BookViewModel
-                {
-                    Id = b.Id,
-                    Title = b.Title,
-                    AuthorName = b.Author != null ? b.Author.Name : "Unknown",
-                    Description = b.Description ?? string.Empty,
-                    PublicationYear = b.PublicationYear,
-                    GenreName = b.Genre != null ? b.Genre.Name : "Unknown",
-                    AverageRating = b.Reviews.Any() ? Math.Round(b.Reviews.Average(r => r.Rating), 1) : 0,
-                    ReviewCount = b.Reviews.Count
-                })
-                .ToListAsync();
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim().ToLower();
+                query = query.Where(b =>
+                    b.Title.ToLower().Contains(term) ||
+                    b.Author.Name.ToLower().Contains(term));
+            }
+
+            if (genreId.HasValue)
+                query = query.Where(b => b.GenreId == genreId.Value);
+
+            query = sortBy switch
+            {
+                "year_desc" => query.OrderByDescending(b => b.PublicationYear),
+                "year_asc" => query.OrderBy(b => b.PublicationYear),
+                "rating" => query.OrderByDescending(b =>
+                                   b.Reviews.Any()
+                                       ? b.Reviews.Average(r => (double)r.Rating)
+                                       : 0),
+                _ => query.OrderBy(b => b.Title)
+            };
+
+            var projected = query.Select(b => new BookViewModel
+            {
+                Id = b.Id,
+                Title = b.Title,
+                AuthorName = b.Author != null ? b.Author.Name : "Unknown",
+                Description = b.Description ?? string.Empty,
+                PublicationYear = b.PublicationYear,
+                GenreName = b.Genre != null ? b.Genre.Name : "Unknown",
+                AverageRating = b.Reviews.Any()
+                                      ? Math.Round(b.Reviews.Average(r => (double)r.Rating), 1)
+                                      : 0,
+                ReviewCount = b.Reviews.Count
+            });
+
+            return await PaginatedList<BookViewModel>.CreateAsync(projected, page, pageSize);
         }
 
         public async Task<BookViewModel?> GetByIdAsync(int id)
@@ -54,7 +83,9 @@ namespace BookReviewHub.Services
                 Description = book.Description ?? string.Empty,
                 PublicationYear = book.PublicationYear,
                 GenreName = book.Genre?.Name ?? "Unknown",
-                AverageRating = book.Reviews.Any() ? Math.Round(book.Reviews.Average(r => r.Rating), 1) : 0,
+                AverageRating = book.Reviews.Any()
+                                      ? Math.Round(book.Reviews.Average(r => (double)r.Rating), 1)
+                                      : 0,
                 ReviewCount = book.Reviews.Count
             };
         }
