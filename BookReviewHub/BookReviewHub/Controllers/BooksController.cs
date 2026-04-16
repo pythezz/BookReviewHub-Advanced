@@ -29,10 +29,25 @@ namespace BookReviewHub.Controllers
             _readingListService = readingListService;
         }
 
-        public async Task<IActionResult> Index()
+        private const int PageSize = 6;
+
+        public async Task<IActionResult> Index(
+            string? search, int? genreId, string? sortBy, int page = 1)
         {
-            var books = await _bookService.GetAllAsync();
-            return View(books);
+            var books = await _bookService.GetPagedAsync(search, genreId, sortBy, page, PageSize);
+            var genres = await _genreService.GetSelectListAsync();
+
+            var vm = new BookSearchViewModel
+            {
+                SearchTerm = search,
+                GenreId = genreId,
+                SortBy = sortBy,
+                CurrentPage = page,
+                Books = books,
+                Genres = genres
+            };
+
+            return View(vm);
         }
 
         public async Task<IActionResult> Details(int? id)
