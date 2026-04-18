@@ -1,32 +1,23 @@
-using System.Diagnostics;
-using BookReviewHub.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookReviewHub.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        public IActionResult Index() => View();
 
-        public HomeController(ILogger<HomeController> logger)
+        [Route("not-found")]
+        public IActionResult NotFound404()
         {
-            _logger = logger;
+            Response.StatusCode = 404;
+            return View("NotFound");
         }
 
-        public IActionResult Index()
+        [Route("server-error")]
+        public IActionResult ServerError()
         {
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            Response.StatusCode = 500;
+            return View("ServerError");
         }
     }
 }
