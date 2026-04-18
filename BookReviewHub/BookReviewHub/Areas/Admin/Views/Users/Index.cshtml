@@ -1,0 +1,82 @@
+﻿@model IEnumerable<BookReviewHub.Models.ApplicationUser>
+@{
+    ViewData["Title"] = "Manage Users";
+    var userRoles = ViewBag.UserRoles as Dictionary<string, IList<string>>;
+    var currentUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+}
+
+<h2 class="h4 mb-4">Manage Users</h2>
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Display Name</th>
+                    <th>Email</th>
+                    <th>Registered</th>
+                    <th>Roles</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    var roles = userRoles?.ContainsKey(user.Id) == true
+                    ? userRoles[user.Id]
+                    : new List<string>();
+                    var isAdmin = roles.Contains("Administrator");
+                    var isSelf = user.Id == currentUserId;
+
+                    <tr class="@(isSelf ? "table-active" : "")">
+                        <td class="fw-semibold">
+                            @user.DisplayName
+                            @if (isSelf)
+                            {
+                                <span class="badge bg-info ms-1">You</span>
+                            }
+                        </td>
+                        <td class="text-muted small">@user.Email</td>
+                        <td class="text-muted small">
+                            @user.RegisteredAt.ToString("MMM dd, yyyy")
+                        </td>
+                        <td>
+                            @foreach (var role in roles)
+                            {
+                                <span class="badge @(role == "Administrator" ? "bg-danger" : "bg-secondary") me-1">
+                                    @role
+                                </span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            @if (!isSelf)
+                            {
+                                if (!isAdmin)
+                                {
+                                    <form asp-action="Promote" method="post" class="d-inline"
+                                          onsubmit="return confirm('Promote to Administrator?')">
+                                        <input type="hidden" name="userId" value="@user.Id" />
+                                        <button class="btn btn-outline-warning btn-sm">Promote</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-action="Demote" method="post" class="d-inline"
+                                          onsubmit="return confirm('Remove admin rights?')">
+                                        <input type="hidden" name="userId" value="@user.Id" />
+                                        <button class="btn btn-outline-secondary btn-sm">Demote</button>
+                                    </form>
+                                }
+                                <form asp-action="Delete" method="post" class="d-inline"
+                                      onsubmit="return confirm('Permanently delete this user?')">
+                                    <input type="hidden" name="userId" value="@user.Id" />
+                                    <button class="btn btn-outline-danger btn-sm">Delete</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

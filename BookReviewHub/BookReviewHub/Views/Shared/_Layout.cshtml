@@ -37,6 +37,16 @@
                                             My Reading List
                                         </a>
                                     </li>
+                                    @if (User.IsInRole("Administrator"))
+                                    {
+                                        <li>
+                                            <a class="dropdown-item text-danger fw-semibold"
+                                               asp-area="Admin" asp-controller="Books" asp-action="Index">
+                                                Admin Panel
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider" /></li>
+                                    }
                                 </ul>
                             </li>
                         }
