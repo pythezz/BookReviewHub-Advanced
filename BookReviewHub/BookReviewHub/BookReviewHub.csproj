@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Admin\Views\Genres\" />
     <Folder Include="Areas\Admin\Views\Users\" />
   </ItemGroup>
 
