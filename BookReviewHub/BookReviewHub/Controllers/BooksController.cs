@@ -76,6 +76,7 @@ namespace BookReviewHub.Controllers
                 Genres = await _genreService.GetSelectListAsync(),
                 Authors = await _authorService.GetSelectListAsync()
             };
+
             return View(model);
         }
 
@@ -90,6 +91,7 @@ namespace BookReviewHub.Controllers
                 return View(model);
             }
             await _bookService.CreateAsync(model);
+            TempData["Success"] = "Book added successfully!";
             return RedirectToAction(nameof(Index));
         }
 
@@ -116,6 +118,8 @@ namespace BookReviewHub.Controllers
             }
             var updated = await _bookService.UpdateAsync(model);
             if (!updated) return NotFound();
+            TempData["Success"] = "Book updated successfully!";
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -132,6 +136,7 @@ namespace BookReviewHub.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _bookService.DeleteAsync(id);
+            TempData["Success"] = "Book deleted.";
             return RedirectToAction(nameof(Index));
         }
     }

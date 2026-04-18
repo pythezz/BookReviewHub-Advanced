@@ -42,6 +42,7 @@ namespace BookReviewHub.Controllers
                 return View(model);
 
             await _genreService.CreateAsync(model);
+            TempData["Success"] = "Genre created successfully!";
             return RedirectToAction(nameof(Index));
         }
 
@@ -65,6 +66,7 @@ namespace BookReviewHub.Controllers
                 return View(model);
 
             var updated = await _genreService.UpdateAsync(model);
+            TempData["Success"] = "Genre updated successfully!";
             if (!updated) return NotFound();
 
             return RedirectToAction(nameof(Index));
@@ -92,6 +94,7 @@ namespace BookReviewHub.Controllers
             }
 
             await _genreService.DeleteAsync(id);
+            TempData["Success"] = "Genre deleted.";
             return RedirectToAction(nameof(Index));
         }
     }
