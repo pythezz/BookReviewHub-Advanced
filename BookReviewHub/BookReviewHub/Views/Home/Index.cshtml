@@ -1,25 +1,39 @@
-﻿@{
+﻿@model BookReviewHub.Helpers.PaginatedList<BookReviewHub.ViewModels.BookViewModel>
+@{
     ViewData["Title"] = "Home";
 }
 
-<div class="text-center mt-5">
-    <h1 class="display-4">Welcome to Book Review Hub!</h1>
-
-    <p class="lead mt-3">
-        Manage books, organize genres, and explore your collection.
-    </p>
-
-    <p class="lead mt-3">
-       Project for softuni, developed by Stanislav Stoychev.
-    </p>
-
-    <div class="mt-4">
-        <a asp-controller="Books" asp-action="Index" class="btn btn-primary btn-lg me-2">
+<div class="p-5 mb-4 rounded-3 text-white"
+     style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);">
+    <div class="py-3">
+        <h1 class="display-5 fw-bold">BookReviewHub</h1>
+        <p class="col-md-8 fs-5 text-white-50">
+            Discover great books. Share honest reviews. Build your reading list.
+        </p>
+        <a asp-controller="Books" asp-action="Index" class="btn btn-outline-light btn-lg me-2">
             Browse Books
         </a>
-
-        <a asp-controller="Genres" asp-action="Index" class="btn btn-secondary btn-lg">
-            View Genres
-        </a>
+        @if (User.Identity?.IsAuthenticated != true)
+        {
+            <a asp-controller="Account" asp-action="Register" class="btn btn-primary btn-lg">
+                Join Free
+            </a>
+        }
     </div>
+</div>
+
+<h2 class="h4 mb-4">Top Rated Books</h2>
+<div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+    @foreach (var book in Model)
+    {
+        <div class="col">
+            @await Html.PartialAsync("_BookCard", book)
+        </div>
+    }
+</div>
+
+<div class="text-center">
+    <a asp-controller="Books" asp-action="Index" class="btn btn-outline-dark">
+        View All Books
+    </a>
 </div>

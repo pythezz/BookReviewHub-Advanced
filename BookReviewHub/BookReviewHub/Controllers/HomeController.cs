@@ -1,10 +1,22 @@
+using BookReviewHub.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookReviewHub.Controllers
 {
     public class HomeController : Controller
     {
-        public IActionResult Index() => View();
+        private readonly IBookService _bookService;
+
+        public HomeController(IBookService bookService)
+        {
+            _bookService = bookService;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var featured = await _bookService.GetPagedAsync(null, null, "rating", 1, 6);
+            return View(featured);
+        }
 
         [Route("not-found")]
         public IActionResult NotFound404()
