@@ -1,4 +1,3 @@
-using BookReviewHub.Services;
 using BookReviewHub.Services.Interfaces;
 using BookReviewHub.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -129,7 +128,7 @@ namespace BookReviewHub.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [Authorize]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -138,7 +137,7 @@ namespace BookReviewHub.Controllers
             return View(book);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Administrator")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

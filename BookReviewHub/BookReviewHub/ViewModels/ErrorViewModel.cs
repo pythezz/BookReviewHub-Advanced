@@ -1,4 +1,4 @@
-namespace BookReviewHub.Models
+namespace BookReviewHub.ViewModels
 {
     public class ErrorViewModel
     {

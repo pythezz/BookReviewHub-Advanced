@@ -1,0 +1,38 @@
+﻿@model BookReviewHub.ViewModels.AuthorViewModel
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Authors</a></li>
+        <li class="breadcrumb-item active">@Model.Name</li>
+    </ol>
+</nav>
+
+<div class="row g-4">
+    <div class="col-md-4 text-center">
+        <h2>@Model.Name</h2>
+        @if (!string.IsNullOrEmpty(Model.Nationality))
+        {
+            <p class="text-muted">@Model.Nationality</p>
+        }
+        @if (Model.BirthYear.HasValue)
+        {
+            <p class="text-muted">Born: @Model.BirthYear</p>
+        }
+        <span class="badge bg-secondary">@Model.BookCount book(s)</span>
+
+        @if (User.IsInRole("Administrator"))
+        {
+            <div class="mt-3 d-flex gap-2 justify-content-center">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-secondary btn-sm">Edit</a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger btn-sm">Delete</a>
+            </div>
+        }
+    </div>
+    <div class="col-md-8">
+        <h5>Biography</h5>
+        <p>@(Model.Biography ?? "No biography available.")</p>
+    </div>
+</div>
