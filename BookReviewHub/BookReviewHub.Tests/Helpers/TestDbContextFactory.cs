@@ -13,9 +13,7 @@ namespace BookReviewHub.Tests.Helpers
                 .UseInMemoryDatabase(dbName)
                 .Options;
 
-            var context = new ApplicationDbContext(options);
-            context.Database.EnsureCreated();
-            return context;
+            return new ApplicationDbContext(options);
         }
 
         public static ApplicationDbContext CreateWithSeed(string dbName)
@@ -27,8 +25,6 @@ namespace BookReviewHub.Tests.Helpers
 
         private static void SeedTestData(ApplicationDbContext context)
         {
-            if (context.Genres.Any()) return;
-
             context.Genres.AddRange(
                 new Genre { Id = 1, Name = "Fiction" },
                 new Genre { Id = 2, Name = "Science Fiction" }
@@ -78,7 +74,8 @@ namespace BookReviewHub.Tests.Helpers
                 UserName = "test@test.com",
                 Email = "test@test.com",
                 DisplayName = "TestUser",
-                RegisteredAt = DateTime.UtcNow
+                RegisteredAt = DateTime.UtcNow,
+                SecurityStamp = "test-security-stamp"
             };
             testUser.PasswordHash = hasher.HashPassword(testUser, "Test@123");
             context.Users.Add(testUser);
