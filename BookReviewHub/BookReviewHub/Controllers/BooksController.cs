@@ -1,6 +1,7 @@
 using BookReviewHub.Services;
 using BookReviewHub.Services.Interfaces;
 using BookReviewHub.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -69,6 +70,8 @@ namespace BookReviewHub.Controllers
 
             return View(book);
         }
+
+        [Authorize]
         public async Task<IActionResult> Create()
         {
             var model = new BookFormModel
@@ -80,6 +83,7 @@ namespace BookReviewHub.Controllers
             return View(model);
         }
 
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BookFormModel model)
@@ -95,6 +99,7 @@ namespace BookReviewHub.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -105,6 +110,7 @@ namespace BookReviewHub.Controllers
             return View(model);
         }
 
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, BookFormModel model)
@@ -123,6 +129,7 @@ namespace BookReviewHub.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -131,6 +138,7 @@ namespace BookReviewHub.Controllers
             return View(book);
         }
 
+        [Authorize]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

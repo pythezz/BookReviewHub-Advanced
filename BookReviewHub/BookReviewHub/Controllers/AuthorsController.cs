@@ -1,5 +1,6 @@
 ﻿using BookReviewHub.Services.Interfaces;
 using BookReviewHub.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookReviewHub.Controllers
@@ -29,8 +30,10 @@ namespace BookReviewHub.Controllers
             return View(author);
         }
 
+        [Authorize(Roles = "Administrator")]
         public IActionResult Create() => View(new AuthorFormModel());
 
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(AuthorFormModel model)
@@ -42,6 +45,7 @@ namespace BookReviewHub.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -52,6 +56,7 @@ namespace BookReviewHub.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, AuthorFormModel model)
@@ -66,6 +71,7 @@ namespace BookReviewHub.Controllers
             return RedirectToAction(nameof(Details), new { id });
         }
 
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -76,6 +82,7 @@ namespace BookReviewHub.Controllers
             return View(author);
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
