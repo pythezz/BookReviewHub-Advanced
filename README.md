@@ -1,8 +1,9 @@
 # BookReviewHub
 
-A book review platform built with **ASP.NET Core 8** and **Entity Framework Core**. Users can browse books, write reviews, manage a personal reading list, and explore authors and genres. Administrators have a dedicated panel for full content and user management.
+A community-driven book review platform built with **ASP.NET Core 8** and **Entity Framework Core**. Users can browse books, write reviews, manage a personal reading list, and explore authors and genres. Administrators have a dedicated panel for full content and user management.
 
-**Live Demo:** *TBD*
+**Live Demo:** https://bookreviewhub-stanislavstoychev-fjf7bqeyh0d7epc2.germanywestcentral-01.azurewebsites.net/
+
 **GitHub:** https://github.com/pythezz/BookReviewHub-Advanced
 
 ---
